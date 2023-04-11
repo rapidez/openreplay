@@ -1,0 +1,12 @@
+{
+    "name": "rapidez/openreplay",
+    "description": "OpenReplay integration for Rapidez",
+    "authors": [
+        {
+            "name": "Roy Duineveld",
+            "email": "royduineveld@gmail.com",
+            "homepage": "https://royduineveld.nl",
+            "role": "Developer"
+        }
+    ]
+}
