@@ -1,5 +1,7 @@
 # Rapidez OpenReplay
 
+Integration for https://openreplay.com
+
 ## Installation
 
 ```
