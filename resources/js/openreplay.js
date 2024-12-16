@@ -11,7 +11,7 @@ const tracker = new Tracker({
     }
 })
 
-document.addEventListener('turbo:load', (event) => {
+document.addEventListener('vue:loaded', (event) => {
     if (window.app && (window.app.user?.email || window.app.guestEmail)) {
         tracker.setUserID(window.app.user?.email || window.app.guestEmail)
     }
