@@ -5,7 +5,14 @@ const captureNetwork = import.meta.env.VITE_OPENREPLAY_CAPTURE_NETWORK === undef
 
 // https://docs.openreplay.com/en/installation/network-options/
 const openreplaySanitizer = (requestAndResponse) => {
-    for (const headerToSanitize of ['Authorization', 'X-CSRF-Token']) {
+    for (const headerToSanitize of [
+        'Authorization', 
+        'X-CSRF-Token',
+        ...(import.meta.env.VITE_OPENREPLAY_SANITIZE_HEADERS || '').split(/ |,/),
+    ]) {
+        if (!headerToSanitize) {
+            continue;
+        }
         if (requestAndResponse.request.headers[headerToSanitize]) {
             requestAndResponse.request.headers[headerToSanitize] = '***'
         }
@@ -27,7 +34,7 @@ const openreplaySanitizer = (requestAndResponse) => {
         }
     }
 
-    for (const jsonValuesToSanitize of [
+    for (const jsonValueToSanitize of [
         'password', 
         'token',
         'mask',
@@ -41,9 +48,13 @@ const openreplaySanitizer = (requestAndResponse) => {
         'po_number',
         'pay_return_url',
         'pay_redirect_url',
-        'iban'
+        'iban',
+        ...(import.meta.env.VITE_OPENREPLAY_SANITIZE_JSON_VALUES || '').split(/ |,/),
     ]) {
-        const re = new RegExp(`("?${jsonValuesToSanitize}"?: ?")([^"]+)(")`, 'g')
+        if (!jsonValueToSanitize) {
+            continue;
+        }
+        const re = new RegExp(`("?${jsonValueToSanitize}"?: ?")([^"]+)(")`, 'g')
         requestAndResponse.request.body = requestAndResponse.request.body?.replaceAll(re, '$1***$3')
         responseBodyString = responseBodyString.replaceAll(re, '$1***$3')
     }
