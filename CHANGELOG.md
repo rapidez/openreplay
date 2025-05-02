@@ -1,6 +1,18 @@
 # Changelog 
 
-[Unreleased changes](https://github.com/rapidez/openreplay/compare/0.2.1...master)
+[Unreleased changes](https://github.com/rapidez/openreplay/compare/0.3.0...0.3.0)
+## [0.3.0](https://github.com/rapidez/openreplay/releases/tag/0.3.0) - 2025-05-02
+
+### Added
+
+- Sanitize sensitive data (#4)
+
+## [0.2.2](https://github.com/rapidez/openreplay/releases/tag/0.2.2) - 2024-12-16
+
+### Fixed
+
+- Listen to vue:loaded (#3)
+
 ## [0.2.1](https://github.com/rapidez/openreplay/releases/tag/0.2.1) - 2024-02-12
 
 ### Fixed
