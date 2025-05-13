@@ -56,7 +56,7 @@ const openreplaySanitizer = (requestAndResponse) => {
         }
         const re = new RegExp(`("?${jsonValueToSanitize}"?: ?")([^"]+)(")`, 'g')
         requestAndResponse.request.body = requestAndResponse.request.body?.replaceAll(re, '$1***$3')
-        responseBodyString = responseBodyString.replaceAll(re, '$1***$3')
+        responseBodyString = responseBodyString?.replaceAll(re, '$1***$3')
     }
 
     if (typeof requestAndResponse.response.body === 'object') {
@@ -65,6 +65,8 @@ const openreplaySanitizer = (requestAndResponse) => {
         } catch (e) {
             // Ignore error
         }
+    } else {
+        requestAndResponse.response.body = responseBodyString
     }
 
     // After we've done sanitisation, we could allow the user to sanitize further.
