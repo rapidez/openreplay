@@ -5,7 +5,7 @@ Integration for https://openreplay.com
 ## Installation
 
 ```
-yarn add @openreplay/tracker -D
+yarn add @openreplay/tracker @openreplay/tracker-graphql -D
 ```
 
 ```

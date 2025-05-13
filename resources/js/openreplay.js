@@ -1,13 +1,39 @@
 import Tracker from '@openreplay/tracker'
+import { createGraphqlMiddleware } from '@openreplay/tracker-graphql';
 
 const captureNetwork = import.meta.env.VITE_OPENREPLAY_CAPTURE_NETWORK === undefined
     || import.meta.env.VITE_OPENREPLAY_CAPTURE_NETWORK === 'true'
 
+const checkAndHandleGraphql = (requestAndResponse) => {
+    const isGraphql = requestAndResponse.url.includes("/graphql");
+    if (isGraphql && requestAndResponse.response.body) {
+        try {
+            const responseObject = typeof requestAndResponse.response.body !== 'string' ? requestAndResponse.response.body : JSON.parse(requestAndResponse.response.body);
+            const requestObject = typeof requestAndResponse.request.body !== 'string' ? requestAndResponse.request.body : JSON.parse(requestAndResponse.request.body);
+
+            recordGraphQL(
+                requestAndResponse.request.body.includes('mutation') ? 'mutation' : 'query',
+                Object.keys(responseObject?.data).join('') || 'unknown',
+                requestObject?.variables,
+                responseObject
+            );
+
+            return true
+        } catch (e) {
+            return false
+        }
+    }
+
+    return false
+}
+
 // https://docs.openreplay.com/en/installation/network-options/
 const openreplaySanitizer = (requestAndResponse) => {
     for (const headerToSanitize of [
-        'Authorization', 
+        'Authorization',
         'X-CSRF-Token',
+        'Cookie',
+        'Set-Cookie',
         ...(import.meta.env.VITE_OPENREPLAY_SANITIZE_HEADERS || '').split(/ |,/),
     ]) {
         if (!headerToSanitize) {
@@ -35,7 +61,7 @@ const openreplaySanitizer = (requestAndResponse) => {
     }
 
     for (const jsonValueToSanitize of [
-        'password', 
+        'password',
         'token',
         'mask',
         'cart_id',
@@ -72,6 +98,8 @@ const openreplaySanitizer = (requestAndResponse) => {
         requestAndResponse = window.openreplaySanitizer(requestAndResponse);
     }
 
+    checkAndHandleGraphql(requestAndResponse)
+
     return requestAndResponse
 }
 
@@ -81,8 +109,10 @@ const tracker = new Tracker({
     network: {
         capturePayload: captureNetwork,
         sanitizer: openreplaySanitizer,
-    }
+    },
 })
+
+export const recordGraphQL = window.recordGraphQL = tracker.use(createGraphqlMiddleware());
 
 document.addEventListener('vue:loaded', (event) => {
     if (window.app && (window.app.user?.email || window.app.guestEmail)) {
