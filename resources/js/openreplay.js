@@ -40,7 +40,7 @@ const openreplaySanitizer = (requestAndResponse) => {
             continue;
         }
         if (requestAndResponse.request.headers[headerToSanitize]) {
-            requestAndResponse.request.headers[headerToSanitize] = '***'
+            requestAndResponse.request.headers[headerToSanitize] = '[Filtered]'
         }
     }
 
@@ -81,8 +81,8 @@ const openreplaySanitizer = (requestAndResponse) => {
             continue;
         }
         const re = new RegExp(`("?${jsonValueToSanitize}"?: ?")([^"]+)(")`, 'g')
-        requestAndResponse.request.body = requestAndResponse.request.body?.replaceAll(re, '$1***$3')
-        responseBodyString = responseBodyString?.replaceAll(re, '$1***$3')
+        requestAndResponse.request.body = requestAndResponse.request.body?.replaceAll(re, '$1[Filtered]$3')
+        responseBodyString = responseBodyString?.replaceAll(re, '$1[Filtered]$3')
     }
 
     if (typeof requestAndResponse.response.body === 'object') {
